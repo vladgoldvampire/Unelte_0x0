@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FTC Pedro Pathing Code Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .header-bar h2 {
+            margin: 0;
+        }
+        .home-btn {
+            padding: 8px 16px;
+            background-color: #3c3c3c;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #555;
+            transition: background-color 0.2s;
+        }
+        .home-btn:hover {
+            background-color: #505050;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+        .form-section, .output-section {
+            flex: 1;
+            background: #252526;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 95%;
+            padding: 8px;
+            margin-top: 5px;
+            background: #3c3c3c;
+            border: 1px solid #555;
+            color: white;
+            border-radius: 4px;
+        }
+        textarea {
+            width: 100%;
+            height: 480px;
+            background: #1e1e1e;
+            color: #dcdcdc;
+            font-family: monospace;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: none;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #1177bb;
+        }
+        .control-point-box {
+            display: none;
+            background: #333;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <h2>0x0 SQUAD Pedro Pathing Autonomous Generator</h2>
+        <a href="index.html" class="home-btn">🏠 Home Page</a>
+    </div>
+
+    <div class="container">
+        <!-- Formularul cu date -->
+        <div class="form-section">
+            <h3>Setări Clasă & Poziții</h3>
+
+            <label>Nume Clasă (OpMode Name):</label>
+            <input type="text" id="className" value="ExampleAuto">
+
+            <h4>Start Pose (Poziție de start)</h4>
+            <label>X Start:</label> <input type="number" id="startX" value="24">
+            <label>Y Start:</label> <input type="number" id="startY" value="24">
+            <label>Unghi Start (grade):</label> <input type="number" id="startDeg" value="0">
+
+            <h4>Park Pose (Poziție de parcare)</h4>
+            <label>X Park:</label> <input type="number" id="parkX" value="48">
+            <label>Y Park:</label> <input type="number" id="parkY" value="48">
+            <label>Unghi Park (grade):</label> <input type="number" id="parkDeg" value="90">
+
+            <h4>Tip Traiectorie</h4>
+            <label>Alege Tipul de Mers:</label>
+            <select id="pathType" onchange="toggleCurveOptions()">
+                <option value="linear">Linear (Linie Dreaptă)</option>
+                <option value="curve">Curve (Bézier / Curbat)</option>
+            </select>
+
+            <div id="controlPointGroup" class="control-point-box">
+                <h5 style="margin: 5px 0;">Control Point (Punct de curbură)</h5>
+                <label>X Control:</label> <input type="number" id="ctrlX" value="24">
+                <label>Y Control:</label> <input type="number" id="ctrlY" value="48">
+            </div>
+        </div>
+
+        <!-- Zonă de Generare Cod -->
+        <div class="output-section">
+            <h3>Cod Java Generat</h3>
+            <textarea id="codeOutput" readonly></textarea>
+            <button onclick="copyCode()">Copiază Codul</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleCurveOptions() {
+            const pathType = document.getElementById('pathType').value;
+            const ctrlBox = document.getElementById('controlPointGroup');
+            ctrlBox.style.display = pathType === 'curve' ? 'block' : 'none';
+            generateCode();
+        }
+
+        function generateCode() {
+            const className = document.getElementById('className').value;
+            
+            const startX = document.getElementById('startX').value;
+            const startY = document.getElementById('startY').value;
+            const startDeg = document.getElementById('startDeg').value;
+
+            const parkX = document.getElementById('parkX').value;
+            const parkY = document.getElementById('parkY').value;
+            const parkDeg = document.getElementById('parkDeg').value;
+
+            const pathType = document.getElementById('pathType').value;
+            const ctrlX = document.getElementById('ctrlX').value;
+            const ctrlY = document.getElementById('ctrlY').value;
+
+            let pathDefinition = '';
+            let extraPose = '';
+
+            if (pathType === 'curve') {
+                extraPose = `\n    private final Pose controlPoint = p.of(${ctrlX}, ${ctrlY});`;
+                pathDefinition = `curve(startPose, controlPoint, park).linear(startPose, park);`;
+            } else {
+                pathDefinition = `line(startPose, park).linear(startPose, park);`;
+            }
+
+            const javaCode = `package org.firstinspires.ftc.teamcode.autos.ExampleAuto;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.pedropathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import com.pedropathing.api.PoseFactory;
+import com.pedropathing.math.Pose;
+import static com.pedropathing.api.Paths.*;
+import com.pedropathing.paths.Path;
+
+@Autonomous(name = "${className}")
+public class ${className} extends OpMode {
+
+    private Follower follower;
+    private final PoseFactory p = PoseFactory.degrees();
+
+    private final Pose startPose = p.of(${startX}, ${startY}, ${startDeg});
+    private final Pose park = p.of(${parkX}, ${parkY}, ${parkDeg});${extraPose}
+
+    private Path parkPath;
+
+    @Override
+    public void init() {
+        follower = Constants.create(hardwareMap);
+        follower.setPose(startPose);
+
+        parkPath = ${pathDefinition}
+    }
+
+    @Override
+    public void start() {
+        follower.followPath(parkPath);
+    }
+
+    @Override 
+    public void loop() {
+        follower.update();
+    }
+}`;
+
+            document.getElementById('codeOutput').value = javaCode;
+        }
+
+        function copyCode() {
+            const codeOutput = document.getElementById('codeOutput');
+            codeOutput.select();
+            document.execCommand('copy');
+            alert('Codul a fost copiat în clipboard!');
+        }
+
+        // Ascultători de evenimente pentru actualizare live
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('input', generateCode);
+        });
+
+        // Generare inițială
+        generateCode();
+    </script>
+<p style="text-align:center; color: #777; font-size: 12px;">
+    © 2026 0x0 SQUAD. Released under the MIT License.
+</p>
+</body>
+</html>

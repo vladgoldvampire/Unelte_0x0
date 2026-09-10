@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0x0 SQUAD - Pedro Pathing Suite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            color: #007acc;
+            margin-bottom: 8px;
+            font-size: 2.2rem;
+        }
+
+        p.subtitle {
+            color: #aaaaaa;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .card {
+            background: #252526;
+            border: 1px solid #3c3c3c;
+            border-radius: 8px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: #0e639c;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #007acc;
+            font-size: 1.3rem;
+        }
+
+        .card p {
+            color: #cccccc;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 16px;
+            background-color: #0e639c;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #1177bb;
+        }
+
+        /* Card dezactivat (Placeholder pentru viitor) */
+        .card.disabled {
+            opacity: 0.6;
+            border-dash-style: dashed;
+            border: 2px dashed #444;
+        }
+
+        .card.disabled:hover {
+            transform: none;
+            border-color: #444;
+        }
+
+        .card.disabled .btn {
+            background-color: #444;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>0x0 SQUAD Control Center</h1>
+        <p class="subtitle">Pedro Pathing Generators & Utilities</p>
+    </header>
+
+    <div class="grid-container">
+        
+        <!-- Generator Constants -->
+        <div class="card">
+            <div>
+                <h3>Constants Generator</h3>
+                <p>Configurează constantele de tuning, parametrii Pinpoint Localizer, dimensiunile robotului și vitezele pentru fișierul <code>Constants.java</code>.</p>
+            </div>
+            <a href="tuning.html" class="btn">Deschide Tool</a>
+        </div>
+
+        <!-- Generator Autonom -->
+        <div class="card">
+            <div>
+                <h3>Autonomous Path Generator</h3>
+                <p>Generează codul pentru fișierul de autonomie OpMode, adăugând pozițiile de Start, Park și traiectorii Lineare sau Curbe (Bézier).</p>
+            </div>
+            <a href="generator.html" class="btn">Deschide Tool</a>
+        </div>
+
+        <!-- Instaleaza Pedro Pathing -->
+        <div class="card">
+            <div>
+                <h3>Instaleaza Pedro Pathing</h3>
+                <p>Necesar pentru folosirea uneltelor</p>
+            </div>
+            <a href="https://pedropathing.com/docs/pathing/installation" class="btn">Acceseaza link</a>
+        </div>
+
+    </div>
+<p style="text-align:center; color: #777; font-size: 12px;">
+    © 2026 0x0 SQUAD. Released under the MIT License.
+</p>
+</body>
+</html>
